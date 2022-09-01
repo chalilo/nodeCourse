@@ -1,0 +1,18 @@
+[
+    {
+        "id": 0,
+        "nombre": "Fender Telecaster"
+    },
+    {
+        "id": 1,
+        "nombre": "Gibson Les Paul"
+    },
+    {
+        "id": 2,
+        "nombre": "Ibanez JEM"
+    },
+    {
+        "id": 3,
+        "nombre":"Fender Stratocaster"
+    }
+]
