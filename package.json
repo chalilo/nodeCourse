@@ -1,8 +1,8 @@
 {
-  "name": "nodecourse",
+  "name": "github_entregas",
   "version": "1.0.0",
-  "description": "Repo cursada de NodeJS coderhouse",
-  "main": "main.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/chalilo/nodeCourse.git"
   },
-  "author": "Camilo Reyes",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/chalilo/nodeCourse/issues"
