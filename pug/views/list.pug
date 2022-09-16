@@ -1,0 +1,17 @@
+html
+    head
+        title Productos
+    body 
+        h1 Productos
+        a(href="/") Ingresar Productos
+        table
+            tr
+                td Nombre 
+                td Precio 
+                td Imagen
+            each val in productos
+                tr 
+                    td=val.title
+                    td=val.price
+                    td
+                        img(src=val.thumbnail alt=`Imagen de ${val.title}` width="200px")

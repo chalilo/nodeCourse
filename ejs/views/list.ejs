@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+</head>
+
+<body>
+    <h1>Productos</h1>
+    <a href="/">Ingresar Productos</a>
+    <table>
+        <tr>
+            <td>Nombre</td>
+            <td>Precio</td>
+            <td>Imagen</td>
+        </tr>
+        <% productos.forEach(prod => { %>
+            <tr>
+                <td><%=prod.title%></td>
+                <td><%=prod.price%></td>
+                <td><img src="<%=prod.thumbnail %>" alt="Imagen de <%=prod.title%>" width="200px"/> </td>
+            </tr>
+        <% }) %>
+    </table>
+</body>
+
+</html>
