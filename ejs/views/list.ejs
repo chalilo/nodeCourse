@@ -11,20 +11,24 @@
 <body>
     <h1>Productos</h1>
     <a href="/">Ingresar Productos</a>
-    <table>
-        <tr>
-            <td>Nombre</td>
-            <td>Precio</td>
-            <td>Imagen</td>
-        </tr>
-        <% productos.forEach(prod => { %>
+    <% if(productos.length >= 1){ %>
+        <table>
             <tr>
-                <td><%=prod.title%></td>
-                <td><%=prod.price%></td>
-                <td><img src="<%=prod.thumbnail %>" alt="Imagen de <%=prod.title%>" width="200px"/> </td>
+                <td>Nombre</td>
+                <td>Precio</td>
+                <td>Imagen</td>
             </tr>
-        <% }) %>
-    </table>
+            <% productos.forEach(prod => { %>
+                <tr>
+                    <td><%=prod.title%></td>
+                    <td><%=prod.price%></td>
+                    <td><img src="<%=prod.thumbnail %>" alt="Imagen de <%=prod.title%>" width="200px"/> </td>
+                </tr>
+            <% }) %>
+        </table>
+    <% } else{ %>
+        <h2>No se encontraron productos</h2>
+    <% } %>
 </body>
 
 </html>
