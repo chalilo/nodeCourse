@@ -7,7 +7,7 @@ const app = express()
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
-app.set('views', './views')
+app.set('views', __dirname +'/views')
 app.set('view engine', "ejs")
 
 app.get('/', (req,res) => {
