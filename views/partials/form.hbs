@@ -1,0 +1,11 @@
+<h1>Formulario</h1>
+<form onsubmit="return anadirProducto(this)" action="/productos" method="POST">
+  <label for="title">Nombre:</label>
+  <input type="text" name="title" id="title" /><br /><br />
+  <label for="price">Precio:</label>
+  <input type="number" name="price" id="price" /><br /><br />
+  <label for="thumbnail">foto URL:</label>
+  <input type="text" name="thumbnail" id="thumbnail" />
+  <input type="submit" value="Enviar" />
+</form>
+{{!-- <a href="/productos">Ver Productos</a> --}}

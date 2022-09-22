@@ -1,0 +1,24 @@
+<h1>Productos</h1>
+<a href="/">Ingresar Productos</a>
+{{#if productos}}
+  <table>
+    <tr>
+      <td>Nombre</td>
+      <td>Precio</td>
+      <td>Imagen</td>
+    </tr>
+    {{#each productos}}
+      <tr>
+        <td>{{this.title}}</td>
+        <td>{{this.price}}</td>
+        <td><img
+            src="{{this.thumbnail}}"
+            alt="Imagen de {{this.title}}"
+            width="200px"
+          /></td>
+      </tr>
+    {{/each}}
+  </table>
+{{else}}
+  <h2>No se encontraron productos</h2>
+{{/if}}
