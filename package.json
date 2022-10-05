@@ -1,26 +1,15 @@
 {
-  "name": "github_entregas",
+  "name": "entrega_final_1",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "productos.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chalilo/nodeCourse.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/chalilo/nodeCourse/issues"
-  },
-  "homepage": "https://github.com/chalilo/nodeCourse#readme",
   "dependencies": {
-    "ejs": "^3.1.8",
-    "express": "^4.18.1",
-    "express-handlebars": "^6.0.6",
-    "pug": "^3.0.2"
+    "express": "^4.18.1"
   }
 }
