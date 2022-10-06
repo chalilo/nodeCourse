@@ -2,104 +2,82 @@ const express = require("express");
 
 const router = express.Router();
 
-let carritos = [];
+const DB = require("./database.js");
+
+const carritos = new DB(__dirname + "/data/carritos.json");
 
 //Testing//
-router.get("/", (req, res) => {
-  res.send(carritos);
+router.get("/", async (req, res) => {
+  const data = await carritos.getAll();
+  res.send(data);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const busqueda = carritos.find((el) => el.id == id);
-  if (busqueda) {
-    res.send({ Carrito: busqueda });
+  const search = await carritos.getById(id);
+  if (search) {
+    res.send(search);
   } else {
-    res.send({ error: "Busqueda fallida, id no existente" });
+    res.send({ error: "ID no encontrada" });
   }
 });
 ////
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { items } = req.body;
   const timestampC = Date.now();
-  const carrito = { id: 0, timestamp: timestampC, items };
-  if (carritos.length <= 0) {
-    carrito.id = 1;
-  } else if (
-    carritos.length >= 1 &&
-    carritos[carritos.length - 1].id == carritos.length
-  ) {
-    carrito.id = carritos.length + 1;
-  } else {
-    carrito.id = carritos[carritos.length - 1] + 1;
-  }
-  carritos.push(carrito);
-  res.send({ "Id carrito": carrito.id, carrito });
+  const carrito = { timestamp: timestampC, items };
+  const added = await carritos.addToDB(carrito);
+  res.send({ mensaje: "Carrito añadido", added });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  const busqueda = carritos.find((el) => el.id == id);
-  if (busqueda) {
-    carritos = carritos.filter((el) => el.id != id);
-    res.send({ "Carrito borrado": busqueda });
+  const deleted = await carritos.deleteById(id);
+  if (deleted) {
+    res.send(deleted);
   } else {
-    res.send({ error: "Busqueda fallida, id no existente" });
+    res.send({ error: "Carrito no existe" });
   }
 });
 
-router.get("/:id/productos", (req, res) => {
+router.get("/:id/productos", async (req, res) => {
   const { id } = req.params;
-  const busqueda = carritos.find((el) => el.id == id);
-  if (busqueda) {
-    res.send(busqueda.items);
-  } else {
-    res.send({ error: "Busqueda fallida, id no existente" });
+  const search = await carritos.getById(id);
+  if (search.items) {
+    if (search.items.length >= 1) {
+      res.send(search.items);
+    } else {
+      res.send({ error: "Carrito vacio" });
+    }
+  }else if (search && !search.items){
+    res.send({error: "Carrito no definido"})
+  } else{
+    res.send({error: "Carrito no existe"})
   }
 });
 
-router.post("/:id/productos", (req, res) => {
+router.post("/:id/productos", async(req, res) => {
   const { id } = req.params;
   const { items } = req.body;
-  const busqueda = carritos.find((el) => el.id == id);
-  if (busqueda) {
-    //busqueda.items.push(items)
-    carritos = carritos.map((el) => {
-      if (el.id == id) {
-        el.items.push(items);
-        return el;
-      } else {
-        return el;
-      }
-    });
-    res.send({ mensaje: `Items añadidos a carrito ${id}`, items });
-  } else {
-    res.send({ error: "Busqueda fallida, id no existente" });
+  let search = await carritos.getById(id)
+  if(search.items){
+    const spreadOrig = [...search.items]
+    const joinedItems = {items:[...spreadOrig,...items]}
+    const edited = await carritos.editObj(id,joinedItems)
+    res.send(edited)
+  } else if(search && !search.items){
+    const edited = await carritos.editObj(id,{items})
+    res.send(edited)
+  } else{
+    res.send({error: "Carrito no existe"})
   }
 });
 
-router.delete("/:id/productos/:id_prod", (req, res) => {
+router.delete("/:id/productos/:id_prod", async(req, res) => {
   const { id, id_prod } = req.params;
-  const busquedaC = carritos.find((el) => el.id == id);
-  const busquedaP = busquedaC.items.find((el) => el.id == id_prod);
-  if (busquedaC && busquedaP) {
-    carritos = carritos.map((el) => {
-      if (el.id == id) {
-        el.items = el.items.filter((el) => el.id != id_prod);
-        return el;
-      } else {
-        return el;
-      }
-    });
-    res.send({
-      mensaje: `Producto con id ${id_prod}, borrado de carrito ${id}`,
-    });
-  } else if (busquedaC && !busquedaP) {
-    res.send({ error: "Producto no encontrado en carrito" });
-  } else {
-    res.send({ error: "Busqueda fallida, id no existente" });
-  }
+  const deleted = await carritos.deleteFromItems(id,id_prod)
+  res.send(deleted)
 });
 
 module.exports = router;

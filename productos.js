@@ -2,9 +2,11 @@ const express = require("express");
 
 const router = express.Router();
 
-const timestamp = Date.now();
+const DB = require("./database.js");
 
-let productos = [
+const productos = new DB(__dirname + "/data/productos.json");
+
+/*let productos = [
   {
     id: 1,
     timestamp: timestamp,
@@ -35,15 +37,16 @@ let productos = [
     thumbnail:
       "https://www.fender.cl/media/catalog/product/cache/1/image/800x800/9df78eab33525d08d6e5fb8d27136e95/g/e/ge502_0149753383v1.jpg",
   },
-];
+];*/
 
-router.get("/productos", (req, res) => {
-  res.send(productos);
+router.get("/productos", async (req, res) => {
+  const data = await productos.getAll();
+  res.send(data);
 });
 
-router.get("/productos/:id", (req, res) => {
+router.get("/productos/:id", async (req, res) => {
   const { id } = req.params;
-  let search = productos.find((prod) => prod.id == id);
+  const search = await productos.getById(id);
   if (search) {
     res.send(search);
   } else {
@@ -51,15 +54,12 @@ router.get("/productos/:id", (req, res) => {
   }
 });
 
-router.post("/productos", (req, res) => {
+router.post("/productos", async (req, res) => {
   const admin = true;
   if (admin) {
     const timestampProduct = Date.now();
     const { title, price, thumbnail, description, stock } = req.body;
-    const lastId =
-      productos.length >= 1 ? productos[productos.length - 1].id : 0;
     const prod = {
-      id: lastId + 1,
       timestamp: timestampProduct,
       title,
       description,
@@ -67,8 +67,8 @@ router.post("/productos", (req, res) => {
       price: parseInt(price),
       stock: parseInt(stock),
     };
-    productos.push(prod);
-    res.send(productos[lastId]);
+    const addedToDB = await productos.addToDB(prod);
+    res.send(addedToDB);
   } else {
     res.send({
       error: -1,
@@ -77,28 +77,32 @@ router.post("/productos", (req, res) => {
   }
 });
 
-router.put("/productos/:id", (req, res) => {
+router.put("/productos/:id", async (req, res) => {
   const admin = true;
   if (admin) {
     const { id } = req.params;
     const { title, price, thumbnail, description, stock } = req.body;
-    let search = productos.find((prod) => prod.id == id);
-    if (search) {
-      search.title = title ? title : search.title;
-      search.price = price ? price : search.price;
-      search.thumbnail = thumbnail ? thumbnail : search.thumbnail;
-      search.description = description ? description : search.description;
-      search.stock = stock ? stock : search.stock;
-      productos = productos.map((obj) => {
-        if (obj.id == id) {
-          return search;
-        } else {
-          return obj;
-        }
-      });
-      res.send(search);
-    } else {
-      res.send({ error: "Producto no encontrado" });
+    const newPropsArr = [
+      { title },
+      { price },
+      { thumbnail },
+      { description },
+      { stock },
+    ];
+    const definedPropsArr = newPropsArr.map((el) => {
+      if (el) {
+        return el;
+      }
+    });
+    let definedPropsObj = {};
+    definedPropsArr.forEach((el) => {
+      definedPropsObj = { ...definedPropsObj, ...el };
+    });
+    const joined = await productos.editObj(id, definedPropsObj);
+    if (joined) {
+      res.send(joined);
+    } else{
+      res.send({error: "Producto no encontrado"})
     }
   } else {
     res.send({
@@ -108,16 +112,15 @@ router.put("/productos/:id", (req, res) => {
   }
 });
 
-router.delete("/productos/:id", (req, res) => {
+router.delete("/productos/:id", async(req, res) => {
   const admin = true;
   if (admin) {
     const { id } = req.params;
-    const search = productos.find((prod) => prod.id == id);
-    if (search) {
-      productos = productos.filter((prod) => prod.id != id);
-      res.send({ eliminado: search, productos });
-    } else {
-      res.send({ error: "Producto no encontrado" });
+    const deleted = await productos.deleteById(id)
+    if (deleted){
+      res.send(deleted)
+    } else{
+      res.send({error: "Producto no encontrado"})
     }
   } else {
     res.send({
